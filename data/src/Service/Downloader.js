@@ -2,8 +2,10 @@ import { Readable } from 'node:stream';
 import fs from 'fs';
 import bz2 from 'unbzip2-stream';
 
-const WIKIVOYAGE_DUMP_URL = 'https://dumps.wikimedia.org/enwikivoyage/latest/enwikivoyage-latest-pages-articles.xml.bz2';
-const WIKIVOYAGE_DUMP_PATH = './files/wikivoyage.xml';
+import {
+  WIKIVOYAGE_DUMP_URL,
+  WIKIVOYAGE_DUMP_PATH,
+} from '../Config/Constants.js';
 
 const Downloader = async (force = false) => {
   if (!force && fs.existsSync(WIKIVOYAGE_DUMP_PATH)) {
