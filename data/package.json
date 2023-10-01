@@ -2,8 +2,15 @@
   "name": "travel-map-data",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
   "main": "src/main.js",
   "scripts": {
     "main": "node src/main.js"
+  },
+  "dependencies": {
+    "unbzip2-stream": "^1.4.3"
   }
 }

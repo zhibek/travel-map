@@ -43,14 +43,19 @@ jobs:
     - name: Set variable to check if anything changed
       id: is_updated
       run: |-
-        echo "##[set-output name=changed;]$(git diff --quiet HEAD data/output/*.geojson; echo $?)"
+        echo "##[set-output name=changed;]$(ls -al ./files/*.geojson | wc -l)"
 
-    - name: Commit files
+    - name: Copy data files
+      if: steps.is_updated.outputs.changed != 0
+      run: |-
+        cp ./files/*.geojson | ../public/files
+
+    - name: Commit data files
       if: steps.is_updated.outputs.changed != 0
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add public
+        git add ../public/files
         git commit -m "Update at $(date +'%Y-%m-%d %H:%M')"
 
     - name: Push changes
