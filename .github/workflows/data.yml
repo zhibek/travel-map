@@ -24,6 +24,22 @@ jobs:
       with:
         node-version: 18
 
+    - name: Cache Tippecanoe binaries
+      uses: actions/cache@v2
+      with:
+        path: /usr/local/bin/tippecano*
+        key: data-${{ runner.os }}-tippecanoe
+        restore-keys: |
+          data-${{ runner.os }}-tippecanoe
+
+    - name: Install Tippecanoe
+      run: |-
+        git clone https://github.com/felt/tippecanoe.git /tmp/tippecanoe --depth 1
+        cd /tmp/tippecanoe
+        sudo make && sudo make install
+        cd -
+        tippecanoe --version
+
     - name: Init yarn cache
       id: yarn-cache
       run: echo "::set-output name=dir::$(yarn cache dir)"

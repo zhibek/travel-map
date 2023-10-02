@@ -9,3 +9,4 @@ export const WIKIVOYAGE_PARSING_OPTIONS = {
 
 export const ITEMS_DB_PATH = './files/items.db';
 export const ITEMS_GEOJSON_PATH = './files/items.geojson';
+export const ITEMS_TILES_PATH = './files/items.pmtiles';

@@ -14,6 +14,7 @@
     "sqlite": "^5.0.1",
     "sqlite3": "^5.1.6",
     "sunday-driver": "^1.0.2",
+    "tippecanoe": "^0.6.0",
     "unbzip2-stream": "^1.4.3",
     "wtf_wikipedia": "^10.1.7"
   }
