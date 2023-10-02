@@ -1,18 +1,33 @@
 const Builder = async (item) => {
-  if (item.isRedirect() || item.isDisambiguation()) {
+  if (checkItemSkip(item)) {
     return;
   }
 
-  // TODO: Item builder logic
-
-  const id = parseInt(item.pageID());
-
-  const name = item.title();
+  const id = getItemId(item);
+  const name = getItemName(item);
+  const url = getItemUrl(item);
 
   return {
     id,
     name,
+    url,
   };
 };
+
+const checkItemSkip = (item) => (
+  (item.isRedirect() || item.isDisambiguation())
+);
+
+const getItemId = (item) => (
+  parseInt(item.pageID())
+);
+
+const getItemName = (item) => (
+  item.title()
+);
+
+const getItemUrl = (item) => (
+  item.url()
+);
 
 export default Builder;
