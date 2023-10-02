@@ -45,12 +45,12 @@ jobs:
     - name: Set variable to check if anything changed
       id: is_updated
       run: |-
-        echo "##[set-output name=changed;]$(ls -al ./files/*.geojson | wc -l)"
+        echo "##[set-output name=changed;]$(ls -al ./files/*.pmtiles | wc -l)"
 
     - name: Copy data files
       if: steps.is_updated.outputs.changed != 0
       run: |-
-        cp ./files/*.geojson | ../public/files
+        cp ./files/*.pmtiles ../public/files
 
     - name: Commit data files
       if: steps.is_updated.outputs.changed != 0
