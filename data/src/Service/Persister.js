@@ -1,7 +1,9 @@
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 
-const ITEMS_DB_PATH = './files/items.db';
+import {
+  ITEMS_DB_PATH,
+} from '../Config/Constants.js';
 
 let instance;
 

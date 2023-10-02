@@ -49,7 +49,6 @@ const Reader = async () => {
     end: `100%`,
   };
   const result = await sundayDriver(config);
-  //console.log(`Reader: Completed! (${result.chunksDone} chunks)`);
 
   const items = persister.getItems();
   console.log(`Reader: Completed! (${items.length} items)`);

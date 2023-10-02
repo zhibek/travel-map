@@ -6,3 +6,6 @@ export const WIKIVOYAGE_PARSING_OPTIONS = {
   wiki: 'wikivoyage',
   lang: 'en',
 };
+
+export const ITEMS_DB_PATH = './files/items.db';
+export const ITEMS_GEOJSON_PATH = './files/items.geojson';
