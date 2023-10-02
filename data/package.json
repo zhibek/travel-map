@@ -11,6 +11,8 @@
     "main": "node src/main.js"
   },
   "dependencies": {
+    "sqlite": "^5.0.1",
+    "sqlite3": "^5.1.6",
     "sunday-driver": "^1.0.2",
     "unbzip2-stream": "^1.4.3",
     "wtf_wikipedia": "^10.1.7"

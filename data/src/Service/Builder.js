@@ -6,14 +6,17 @@ const Builder = async (wiki) => {
   }
 
   const parentItem = buildItem(wiki);
-  if (parentItem) {
-    newItems.push(parentItem);
+  if (!parentItem) {
+    return newItems;
   }
+  newItems.push(parentItem);
 
   const childItems = buildChildItems(wiki, parentItem);
-  if (childItems && childItems.length) {
-    newItems.push(...childItems);
-  }
+  childItems.forEach((childItem) => {
+    if (childItem) {
+      newItems.push(childItem);
+    }
+  });
 
   return newItems;
 };
@@ -22,10 +25,19 @@ const checkItemSkip = (wiki) => (
   (wiki.isRedirect() || wiki.isDisambiguation())
 );
 
+const checkAttributesSkip = (id, name, url) => (
+  (!id || !name || !url)
+);
+
 const buildItem = (wiki) => {
   const id = getItemId(wiki);
   const name = getItemName(wiki);
   const url = getItemUrl(wiki);
+
+  if (checkAttributesSkip(id, name, url)) {
+    return;
+  }
+
   const parent = getItemParent(wiki);
   const coordinates = getItemCoordinates(wiki);
   const description = getItemDescription(wiki);
@@ -37,8 +49,11 @@ const buildItem = (wiki) => {
     id,
     name,
     url,
-    parent,
     coordinates,
+    // rank,
+    // type,
+    // level,
+    parent,
     description,
     characters,
     wikidata,
@@ -148,10 +163,15 @@ const buildChildItems = (wiki, parentItem) => {
 };
 
 const buildChildItem = (data, parentItem, counter) => {
-  const { url, parent } = parentItem;
-
   const id = getChildItemId(parentItem, counter);
   const name = getChildItemName(data);
+  const { url } = parentItem;
+
+  if (checkAttributesSkip(id, name, url)) {
+    return;
+  }
+
+  const { parent } = parentItem;
   const coordinates = getChildItemCoordinates(data);
   const description = getChildItemDescription(data);
   const characters = getChildItemCharacters(data);
@@ -162,8 +182,11 @@ const buildChildItem = (data, parentItem, counter) => {
     id,
     name,
     url,
-    parent,
     coordinates,
+    parent,
+    // rank,
+    // type,
+    // level,
     description,
     characters,
     wikidata,

@@ -3,7 +3,7 @@ import sundayDriver from 'sunday-driver';
 
 import Parser from './Parser.js';
 import Builder from './Builder.js';
-import Persister from './Persister.js';
+import PersisterInstance from './Persister.js';
 
 import {
   WIKIVOYAGE_DUMP_PATH,
@@ -18,6 +18,29 @@ const Reader = async () => {
 
   console.log('Reader: Starting...');
 
+  const persister = await PersisterInstance();
+
+  const readChunk = async (chunk, nextChunk) => {
+    try {
+      const wiki = await Parser(chunk);
+      if (!wiki) {
+        return nextChunk();
+      }
+
+      const newItems = await Builder(wiki);
+      if (!newItems) {
+        return nextChunk();
+      }
+
+      persister.saveItems(newItems);
+    } catch (err) {
+      console.log('Error parsing chunk!');
+      console.error(err);
+    }
+
+    return nextChunk();
+  };
+
   const config = {
     file: WIKIVOYAGE_DUMP_PATH,
     splitter: WIKIVOYAGE_CHUNK_STRING,
@@ -26,29 +49,12 @@ const Reader = async () => {
     end: `100%`,
   };
   const result = await sundayDriver(config);
+  //console.log(`Reader: Completed! (${result.chunksDone} chunks)`);
 
-  console.log(`Reader: Completed! (${result.chunksDone} chunks)`);
-};
+  const items = persister.getItems();
+  console.log(`Reader: Completed! (${items.length} items)`);
 
-const readChunk = async (chunk, nextChunk) => {
-  try {
-    const wiki = await Parser(chunk);
-    if (!wiki) {
-      return nextChunk();
-    }
-
-    const newItems = await Builder(wiki);
-    if (!newItems) {
-      return nextChunk();
-    }
-
-    await Persister(newItems);
-  } catch (err) {
-    console.log('Error parsing chunk!');
-    console.error(err);
-  }
-
-  return nextChunk();
+  return items;
 };
 
 export default Reader;
