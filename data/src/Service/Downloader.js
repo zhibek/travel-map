@@ -2,10 +2,12 @@ import { Readable } from 'node:stream';
 import fs from 'fs';
 import bz2 from 'unbzip2-stream';
 
+import Wait from '../Utils/Wait.js';
 import {
   WIKIVOYAGE_DUMP_URL,
   WIKIVOYAGE_DUMP_PATH,
 } from '../Config/Constants.js';
+
 
 const Downloader = async (force = false) => {
   if (!force && fs.existsSync(WIKIVOYAGE_DUMP_PATH)) {
@@ -23,6 +25,9 @@ const Downloader = async (force = false) => {
   readStream
     .pipe(bz2())
     .pipe(writeStream);
+
+  // Add brief wait to allow file-system to update
+  await Wait(500);
 
   console.log('Downloader: Completed!');
 };
