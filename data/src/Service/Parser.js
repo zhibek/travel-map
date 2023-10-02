@@ -1,15 +1,15 @@
 import wtf from 'wtf_wikipedia';
 
-import ParserItem from './Parser/Item.js';
+import Builder from './Builder.js';
 
 import {
   WIKIVOYAGE_PARSING_OPTIONS,
 } from '../Config/Constants.js';
 
 const Parser = async (chunk) => {
-  const contents = parseXml(chunk);
+  const contents = splitXml(chunk);
   if (!contents) {
-    console.error('Problem parsing XML!');
+    console.error('Problem splitting XML!');
     return;
   }
 
@@ -19,9 +19,9 @@ const Parser = async (chunk) => {
     return;
   }
 
-  const newItems = ParserItem(wiki);
+  const newItems = Builder(wiki);
   if (!newItems) {
-    console.error('Problem parsing item!');
+    console.error('Problem building item!');
     return;
   }
 
@@ -37,7 +37,7 @@ const unescapeEntities = (wiki) => (
     .replace(/&amp;/g, '&')
 );
 
-const parseXml = (xml) => {
+const splitXml = (xml) => {
   if (!xml) {
     return;
   }

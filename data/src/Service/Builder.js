@@ -1,9 +1,9 @@
-const ParserItem = async (item) => {
+const Builder = async (item) => {
   if (item.isRedirect() || item.isDisambiguation()) {
     return;
   }
 
-  // TODO: Item parser logic
+  // TODO: Item builder logic
 
   const id = parseInt(item.pageID());
 
@@ -15,4 +15,4 @@ const ParserItem = async (item) => {
   };
 };
 
-export default ParserItem;
+export default Builder;
