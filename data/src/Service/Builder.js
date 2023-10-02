@@ -1,8 +1,20 @@
 const Builder = async (item) => {
+  const newItems = [];
+
   if (checkItemSkip(item)) {
-    return;
+    return newItems;
   }
 
+  newItems.push(buildItem(item));
+
+  return newItems;
+};
+
+const checkItemSkip = (item) => (
+  (item.isRedirect() || item.isDisambiguation())
+);
+
+const buildItem = (item) => {
   const id = getItemId(item);
   const name = getItemName(item);
   const url = getItemUrl(item);
@@ -25,10 +37,6 @@ const Builder = async (item) => {
     image,
   };
 };
-
-const checkItemSkip = (item) => (
-  (item.isRedirect() || item.isDisambiguation())
-);
 
 const getItemId = (item) => (
   parseInt(item.pageID())
