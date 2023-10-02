@@ -2,6 +2,7 @@ import fs from 'fs';
 import sundayDriver from 'sunday-driver';
 
 import Parser from './Parser.js';
+import Builder from './Builder.js';
 import Persister from './Persister.js';
 
 import {
@@ -29,10 +30,16 @@ const Reader = async () => {
 
 const readChunk = async (chunk, nextChunk) => {
   try {
-    const newItems = await Parser(chunk);
+    const wiki = await Parser(chunk);
+    if (!wiki) {
+      return nextChunk();
+    }
+
+    const newItems = await Builder(wiki);
     if (!newItems) {
       return nextChunk();
     }
+
     await Persister(newItems);
   } catch (err) {
     console.log('Error parsing chunk!');

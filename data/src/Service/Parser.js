@@ -1,7 +1,5 @@
 import wtf from 'wtf_wikipedia';
 
-import Builder from './Builder.js';
-
 import {
   WIKIVOYAGE_PARSING_OPTIONS,
 } from '../Config/Constants.js';
@@ -19,13 +17,7 @@ const Parser = async (chunk) => {
     return;
   }
 
-  const newItems = Builder(wiki);
-  if (!newItems) {
-    console.error('Problem building item!');
-    return;
-  }
-
-  return newItems;
+  return wiki;
 };
 
 const unescapeEntities = (wiki) => (
