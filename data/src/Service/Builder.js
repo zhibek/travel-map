@@ -10,6 +10,11 @@ const Builder = async (wiki) => {
     newItems.push(parentItem);
   }
 
+  const childItems = buildChildItems(wiki, parentItem);
+  if (childItems && childItems.length) {
+    newItems.push(...childItems);
+  }
+
   return newItems;
 };
 
@@ -114,6 +119,99 @@ const getItemImage = (wiki) => {
 
     return true;
   });
+
+  return imageUrl;
+};
+
+const buildChildItems = (wiki, parentItem) => {
+  const newItems = [];
+
+  const types = [
+    'see',
+    'do',
+    'go',
+  ];
+
+  let counter = 0;
+
+  types.forEach((type) => {
+    wiki.templates(type).forEach((template) => {
+      const data = template.json();
+      const childItem = buildChildItem(data, parentItem, counter++);
+      if (childItem) {
+        newItems.push(childItem);
+      }
+    });
+  });
+
+  return newItems;
+};
+
+const buildChildItem = (data, parentItem, counter) => {
+  const { url, parent } = parentItem;
+
+  const id = getChildItemId(parentItem, counter);
+  const name = getChildItemName(data);
+  const coordinates = getChildItemCoordinates(data);
+  const description = getChildItemDescription(data);
+  const characters = getChildItemCharacters(data);
+  const wikidata = getChildItemWikidata(data);
+  const image = getChildItemImage(data);
+
+  return {
+    id,
+    name,
+    url,
+    parent,
+    coordinates,
+    description,
+    characters,
+    wikidata,
+    image,
+  };
+};
+
+const getChildItemId = (parentItem, counter) => (
+  (parentItem.id * 100000000) + counter
+);
+
+const getChildItemName = (data) => (
+  data?.name || null
+);
+
+const getChildItemCoordinates = (data) => {
+  const lat = data?.lat ? parseFloat(data?.lat) : null;
+  const lon = data?.long ? parseFloat(data?.long) : null;
+
+  if (!lat || !lon) {
+    return null;
+  }
+
+  // Order required for maplibre-gl/mapbox-gl
+  return [
+    lon,
+    lat,
+  ];
+};
+
+const getChildItemDescription = (data) => (
+  data?.content || null
+);
+
+const getChildItemCharacters = (data) => (
+  data?.content?.length || 0
+);
+
+const getChildItemWikidata = (data) => (
+  data?.wikidata || null
+);
+
+const getChildItemImage = (data) => {
+  let imageUrl = null;
+
+  if (data?.image) {
+    imageUrl = 'https://wikivoyage.org/wiki/Special:Redirect/file/' + encodeURIComponent(data?.image);
+  }
 
   return imageUrl;
 };
