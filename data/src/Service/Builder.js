@@ -40,24 +40,26 @@ const buildItem = (wiki) => {
 
   const parent = getItemParent(wiki);
   const coordinates = getItemCoordinates(wiki);
+  const { type, level } = getItemTypeAndLevel(wiki);
   const description = getItemDescription(wiki);
   const characters = getItemCharacters(wiki);
   const wikidata = getItemWikidata(wiki);
   const image = getItemImage(wiki);
+  const rank = calculateRank(type, level, characters);
 
   return {
     id,
     name,
     url,
-    coordinates,
-    // rank,
-    // type,
-    // level,
     parent,
+    coordinates,
+    type,
+    level,
     description,
     characters,
     wikidata,
     image,
+    rank,
   };
 };
 
@@ -138,6 +140,72 @@ const getItemImage = (wiki) => {
   return imageUrl;
 };
 
+const getItemTypeAndLevel = (wiki, parent = null) => {
+  let result = {
+    type: 'unknown',
+    level: 'unknown',
+  };
+
+  const types = [
+    'park',
+    'airport',
+    'ruralarea',
+    'diveguide',
+    'district',
+    'city',
+    'region',
+    'country',
+    'continent',
+  ];
+  const levels = [
+    'extra',
+    'stub',
+    'outline',
+    'usable',
+    'guide',
+    'star',
+  ];
+  const continents = [
+    'Africa',
+    'Antartica',
+    'Asia',
+    'Europe',
+    'Oceania',
+    'North America',
+    'South America',
+  ];
+
+  exit_loops:
+  for (const type of types) {
+    for (const level of levels) {
+      const template = level + type;
+      if (wiki.templates(template).length > 0) {
+        result = {
+          type,
+          level,
+        };
+        break exit_loops;
+      }
+    }
+  }
+
+  if (result.type === 'city') {
+    // check for "huge" city
+    if (wiki.templates('regionlist').length) {
+      result.level = 'huge';
+    }
+  }
+
+  // Check for "subcontinent" region
+  if (result.type === 'region' && result.level !== 'extra') {
+    if (continents.includes(parent)) {
+      result.level = 'subcontinent';
+    }
+  }
+
+  return result;
+};
+
 const buildChildItems = (wiki, parentItem) => {
   const newItems = [];
 
@@ -173,24 +241,26 @@ const buildChildItem = (data, parentItem, counter) => {
 
   const { parent } = parentItem;
   const coordinates = getChildItemCoordinates(data);
+  const { type, level } = getChildItemTypeAndLevel(data);
   const description = getChildItemDescription(data);
   const characters = getChildItemCharacters(data);
   const wikidata = getChildItemWikidata(data);
   const image = getChildItemImage(data);
+  const rank = calculateRank(type, level, characters);
 
   return {
     id,
     name,
     url,
-    coordinates,
     parent,
-    // rank,
-    // type,
-    // level,
+    coordinates,
+    type,
+    level,
     description,
     characters,
     wikidata,
     image,
+    rank,
   };
 };
 
@@ -217,6 +287,11 @@ const getChildItemCoordinates = (data) => {
   ];
 };
 
+const getChildItemTypeAndLevel = (data) => ({
+  type: data?.template,
+  level: null,
+});
+
 const getChildItemDescription = (data) => (
   data?.content || null
 );
@@ -237,6 +312,79 @@ const getChildItemImage = (data) => {
   }
 
   return imageUrl;
+};
+
+const calculateRank = (type, level, characters) => {
+  let rank = 10;
+
+  switch (type) {
+    case 'continent':
+      rank = 1;
+      break;
+    case 'country':
+      rank = 3;
+      break;
+    case 'region':
+      // Separate regions above countries ("subcontinents") and those below
+      if (level === 'subcontinent') {
+        rank = 2;
+      } else if (characters >= 20000) {
+        rank = 4;
+      } else {
+        rank = 5;
+      }
+      break;
+
+    case 'city':
+      // Find "huge" cities & give them high ranking
+      if (level === 'huge') {
+        rank = 3;
+      } else if (characters >= 50000) {
+        rank = 4;
+      } else if (characters >= 20000) {
+        rank = 5;
+      } else if (characters >= 10000) {
+        rank = 6;
+      } else {
+        rank = 7;
+      }
+      break;
+
+    case 'park':
+    case 'ruralarea':
+    case 'diveguide':
+    case 'airport':
+      if (characters >= 20000) {
+        rank = 7;
+      } else {
+        rank = 9;
+      }
+      break;
+
+    case 'district':
+      if (characters >= 20000) {
+        rank = 8;
+      } else if (characters > 0) {
+        rank = 9;
+      } else {
+        rank = 10;
+      }
+      break;
+
+    case 'see':
+    case 'do':
+    default:
+      if (characters >= 200) {
+        rank = 8;
+      } else if (characters > 0) {
+        rank = 9;
+      } else {
+        rank = 10;
+      }
+      break;
+  }
+
+  return rank;
 };
 
 export default Builder;

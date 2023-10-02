@@ -37,11 +37,14 @@ const checkItemExportSkip = (item) => (
 const buildGeojsonFeatureFromItem = (item) => {
   const { id } = item;
   const { coordinates, ...properties } = item;
+  const tippecanoe = {
+    minzoom: item.rank,
+  };
 
-  return buildGeojsonFeature(id, coordinates, properties);
+  return buildGeojsonFeature(id, coordinates, properties, tippecanoe);
 };
 
-const buildGeojsonFeature = (id, coordinates = [], properties = {}) => ({
+const buildGeojsonFeature = (id, coordinates = [], properties = {}, tippecanoe = {}) => ({
   type: 'Feature',
   id,
   geometry: {
@@ -49,6 +52,7 @@ const buildGeojsonFeature = (id, coordinates = [], properties = {}) => ({
     coordinates,
   },
   properties,
+  tippecanoe,
 });
 
 const buildGeojsonFeatureCollection = (features = []) => ({
