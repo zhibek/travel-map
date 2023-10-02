@@ -34,10 +34,14 @@ jobs:
 
     - name: Install Tippecanoe
       run: |-
-        git clone https://github.com/felt/tippecanoe.git /tmp/tippecanoe --depth 1
-        cd /tmp/tippecanoe
-        sudo make && sudo make install
-        cd -
+        if ! command -v tippecanoe &> /dev/null
+        then
+            echo "tippecanoe could not be found, installing..."
+            git clone https://github.com/felt/tippecanoe.git /tmp/tippecanoe --depth 1
+            cd /tmp/tippecanoe
+            sudo make && sudo make install
+            cd -
+        fi
         tippecanoe --version
 
     - name: Init yarn cache
