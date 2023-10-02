@@ -22,10 +22,12 @@ const Reader = async () => {
     file: WIKIVOYAGE_DUMP_PATH,
     splitter: WIKIVOYAGE_CHUNK_STRING,
     each: readChunk,
+    start: `0%`,
+    end: `100%`,
   };
   const result = await sundayDriver(config);
 
-  console.log('Reader: Completed!');
+  console.log(`Reader: Completed! (${result.chunksDone} chunks)`);
 };
 
 const readChunk = async (chunk, nextChunk) => {

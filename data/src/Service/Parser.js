@@ -11,6 +11,11 @@ const Parser = async (chunk) => {
     return;
   }
 
+  // Skip pages outside of main namespace
+  if (contents?.namespace !== '0' || !contents?.title) {
+    return;
+  }
+
   const wiki = parseWiki(contents);
   if (!wiki) {
     console.error('Problem parsing wiki!');
@@ -20,8 +25,8 @@ const Parser = async (chunk) => {
   return wiki;
 };
 
-const unescapeEntities = (wiki) => (
-  wiki
+const unescapeEntities = (raw) => (
+  raw
     .replace(/&apos;/g, "'")
     .replace(/&quot;/g, '"')
     .replace(/&gt;/g, '>')
@@ -35,13 +40,20 @@ const splitXml = (xml) => {
   }
 
   let title = null;
+  let namespace = null;
   let pageID = null;
-  let wiki = null;
+  let raw = null;
 
   // Match page title
   const matchTitle = xml.match(/<title>([\s\S]+?)<\/title>/);
   if (matchTitle !== null) {
     title = matchTitle[1];
+  }
+
+  // Match namespace
+  const matchNamespace = xml.match(/<ns>([0-9]*?)<\/ns>/);
+  if (matchNamespace !== null) {
+    namespace = matchNamespace[1];
   }
 
   // Match page id
@@ -50,29 +62,35 @@ const splitXml = (xml) => {
     pageID = matchPageID[1];
   }
 
-  // Match wiki text & unescape
-  const matchWiki = xml.match(/<text ([\s\S]*?)<\/text>/);
-  if (matchWiki !== null) {
-    wiki = matchWiki[1].replace(/^.*?>/, '');
-    wiki = unescapeEntities(wiki);
+  // Match raw wiki & unescape
+  const matchRaw = xml.match(/<text ([\s\S]*?)<\/text>/);
+  if (matchRaw !== null) {
+    raw = matchRaw[1].replace(/^.*?>/, '');
+    raw = unescapeEntities(raw);
   }
 
   return {
     title,
+    namespace,
     pageID,
-    wiki,
+    raw,
   };
 };
 
 const parseWiki = (contents) => {
-  const { title, pageID, wiki } = contents;
+  const { title, namespace, pageID, raw } = contents;
   const options = {
     ...WIKIVOYAGE_PARSING_OPTIONS,
     title,
     pageID,
+    namespace,
   };
 
-  return wtf(wiki, options);
+  const wiki = wtf(raw, options);
+  wiki.language(WIKIVOYAGE_PARSING_OPTIONS.lang);
+  wiki.namespace(namespace);
+
+  return wiki;
 };
 
 export default Parser;
