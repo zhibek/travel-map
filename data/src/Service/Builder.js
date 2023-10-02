@@ -1,29 +1,32 @@
-const Builder = async (item) => {
+const Builder = async (wiki) => {
   const newItems = [];
 
-  if (checkItemSkip(item)) {
+  if (checkItemSkip(wiki)) {
     return newItems;
   }
 
-  newItems.push(buildItem(item));
+  const parentItem = buildItem(wiki);
+  if (parentItem) {
+    newItems.push(parentItem);
+  }
 
   return newItems;
 };
 
-const checkItemSkip = (item) => (
-  (item.isRedirect() || item.isDisambiguation())
+const checkItemSkip = (wiki) => (
+  (wiki.isRedirect() || wiki.isDisambiguation())
 );
 
-const buildItem = (item) => {
-  const id = getItemId(item);
-  const name = getItemName(item);
-  const url = getItemUrl(item);
-  const parent = getItemParent(item);
-  const coordinates = getItemCoordinates(item);
-  const description = getItemDescription(item);
-  const characters = getItemCharacters(item);
-  const wikidata = getItemWikidata(item);
-  const image = getItemImage(item);
+const buildItem = (wiki) => {
+  const id = getItemId(wiki);
+  const name = getItemName(wiki);
+  const url = getItemUrl(wiki);
+  const parent = getItemParent(wiki);
+  const coordinates = getItemCoordinates(wiki);
+  const description = getItemDescription(wiki);
+  const characters = getItemCharacters(wiki);
+  const wikidata = getItemWikidata(wiki);
+  const image = getItemImage(wiki);
 
   return {
     id,
@@ -38,22 +41,22 @@ const buildItem = (item) => {
   };
 };
 
-const getItemId = (item) => (
-  parseInt(item.pageID())
+const getItemId = (wiki) => (
+  parseInt(wiki.pageID())
 );
 
-const getItemName = (item) => (
-  item.title()
+const getItemName = (wiki) => (
+  wiki.title()
 );
 
-const getItemUrl = (item) => (
-  item.url()
+const getItemUrl = (wiki) => (
+  wiki.url()
 );
 
-const getItemParent = (item) => {
+const getItemParent = (wiki) => {
   let parent = null;
 
-  item.templates('isPartOf').some((template) => {
+  wiki.templates('isPartOf').some((template) => {
     const parents = template.json()?.list;
 
     if (parents && parents.length) {
@@ -66,10 +69,10 @@ const getItemParent = (item) => {
   return parent;
 };
 
-const getItemCoordinates = (item) => {
+const getItemCoordinates = (wiki) => {
   let coordinates = null;
 
-  item.templates('geo').some((template) => {
+  wiki.templates('geo').some((template) => {
     const geo = template.json();
 
     const lat = geo?.lat ? parseFloat(geo.lat) : null;
@@ -91,22 +94,22 @@ const getItemCoordinates = (item) => {
   return coordinates;
 };
 
-const getItemDescription = (item) => (
-  item.paragraph(0)?.text()?.trim() || null
+const getItemDescription = (wiki) => (
+  wiki.paragraph(0)?.text()?.trim() || null
 );
 
-const getItemCharacters = (item) => (
-  item.text()?.trim()?.length || 0
+const getItemCharacters = (wiki) => (
+  wiki.text()?.trim()?.length || 0
 );
 
-const getItemWikidata = (item) => (
-  item.wikidata()
+const getItemWikidata = (wiki) => (
+  wiki.wikidata()
 );
 
-const getItemImage = (item) => {
+const getItemImage = (wiki) => {
   let imageUrl = null;
 
-  item.images().some((image) => {
+  wiki.images().some((image) => {
     imageUrl = image.json()?.url;
 
     return true;
