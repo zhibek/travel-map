@@ -40,7 +40,7 @@ const buildItem = (wiki) => {
 
   const parent = getItemParent(wiki);
   const coordinates = getItemCoordinates(wiki);
-  const { type, level } = getItemTypeAndLevel(wiki);
+  const { type, level } = getItemTypeAndLevel(wiki, parent);
   const description = getItemDescription(wiki);
   const characters = getItemCharacters(wiki);
   const wikidata = getItemWikidata(wiki);
@@ -140,7 +140,7 @@ const getItemImage = (wiki) => {
   return imageUrl;
 };
 
-const getItemTypeAndLevel = (wiki, parent = null) => {
+const getItemTypeAndLevel = (wiki, parent) => {
   let result = {
     type: 'unknown',
     level: 'unknown',
@@ -162,6 +162,7 @@ const getItemTypeAndLevel = (wiki, parent = null) => {
     'stub',
     'outline',
     'usable',
+    'informative',
     'guide',
     'star',
   ];
@@ -190,7 +191,7 @@ const getItemTypeAndLevel = (wiki, parent = null) => {
   }
 
   if (result.type === 'city') {
-    // check for "huge" city
+    // TODO: Improve logic for checking "huge" cities (results poor with current logic)
     if (wiki.templates('regionlist').length) {
       result.level = 'huge';
     }
