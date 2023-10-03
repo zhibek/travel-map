@@ -70,7 +70,7 @@ jobs:
     - name: Copy data files
       if: steps.is_updated.outputs.changed != 0
       run: |-
-        cp ./files/*.pmtiles ../public/files
+        cp ./files/*.pmtiles ../public/files/
 
     - name: Commit data files
       if: steps.is_updated.outputs.changed != 0
