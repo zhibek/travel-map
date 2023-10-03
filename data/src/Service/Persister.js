@@ -2,6 +2,7 @@ import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
 
 import {
+  ITEMS_PERSIST_DB,
   ITEMS_DB_PATH,
 } from '../Config/Constants.js';
 
@@ -19,6 +20,10 @@ const PersisterInstance = async () => {
 
 class Persister {
   async init() {
+    if (!ITEMS_PERSIST_DB) {
+      return;
+    }
+
     this.items = [];
     this.db = await open({
       filename: ITEMS_DB_PATH,
@@ -27,6 +32,10 @@ class Persister {
   }
 
   async setupDb() {
+    if (!ITEMS_PERSIST_DB) {
+      return;
+    }
+
     return this.db.exec(`CREATE TABLE IF NOT EXISTS items (
       id INT PRIMARY KEY,
       name TEXT NOT NULL,
@@ -43,7 +52,9 @@ class Persister {
   async saveItems(newItems) {
     for (const item of newItems) {
       this.items.push(item);
-      await this.insertDbItem(item);
+      if (ITEMS_PERSIST_DB) {
+        await this.insertDbItem(item);
+      }
     }
   }
 
