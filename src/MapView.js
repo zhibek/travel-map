@@ -6,6 +6,9 @@ import { Protocol } from 'pmtiles';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 import mapStyle from './mapStyle.json';
+if (mapStyle?.sources?.items?.url) {
+  mapStyle.sources.items.url = mapStyle?.sources?.items?.url.replace('/files/', `${window.PUBLIC_URL}/files/`);
+}
 
 const MapView = () => {
   useEffect(() => {

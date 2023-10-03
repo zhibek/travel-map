@@ -11,7 +11,7 @@
 		"items": {
 			"type": "vector",
 			"maxzoom": 10,
-			"url": "pmtiles://travel-map/files/items.pmtiles"
+			"url": "pmtiles://files/items.pmtiles"
 		}
 	},
 	"glyphs": "https://fonts.openmaptiles.org/Klokantech {fontstack}/{range}.pbf",
