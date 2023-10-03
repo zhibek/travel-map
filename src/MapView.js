@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import Map, { NavigationControl } from 'react-map-gl/maplibre';
+import { useState, useEffect } from 'react';
+import Map, { NavigationControl, Popup } from 'react-map-gl/maplibre';
 import maplibregl from 'maplibre-gl';
 import { Protocol } from 'pmtiles';
 
@@ -12,6 +12,8 @@ if (NODE_ENV === 'development') {
 }
 
 const MapView = () => {
+  const [activeFeatures, setActiveFeatures] = useState([]);
+
   useEffect(() => {
     let protocol = new Protocol();
     maplibregl.addProtocol('pmtiles', protocol.tile);
@@ -19,6 +21,32 @@ const MapView = () => {
       maplibregl.removeProtocol('pmtiles');
     };
   }, []);
+
+  const onMouseEnter = (e) => {
+    const features = e.features || [];
+
+    if (features.length > 0) {
+      setActiveFeatures(current => [...current, features[0]]);
+    }
+  };
+
+  const onMouseLeave = (e) => {
+    const features = e.features || [];
+
+    if (features.length > 0) {
+      setActiveFeatures([]);
+    }
+  };
+
+  const onClick = (e) => {
+    const features = e.features || [];
+
+    if (features.length > 0) {
+      setActiveFeatures(current => [...current, features[0]]);
+    } else {
+      setActiveFeatures([]);
+    }
+  };
 
   return (
     <Map
@@ -31,8 +59,28 @@ const MapView = () => {
       mapLib={maplibregl}
       mapStyle={mapStyle}
       hash={true}
+      interactiveLayerIds={["place_city","place_detail"]}
+      onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       <NavigationControl position="top-left" showCompass={false} />
+      {activeFeatures.map(feature => (
+        <Popup
+          key={feature.properties.name}
+          longitude={feature.geometry.coordinates[0]}
+          latitude={feature.geometry.coordinates[1]}
+          closeButton={false}
+          anchor="center"
+        >
+          <div><strong>{feature.properties.name}</strong> (rank: {feature.properties.rank})</div>
+          {feature.properties.image && (
+            <div><img width="300" src={`${feature.properties.image}?width=300`} alt="" /></div>
+          )}
+          <div>{feature.properties.description}</div>
+          <div><a href={feature.properties.url} rel="noreferrer" target="_blank">More information...</a></div>
+        </Popup>
+      ))}
     </Map>
   );
 };
