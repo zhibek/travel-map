@@ -11,7 +11,7 @@ const Tiler = async () => {
   tippecanoe([
     ITEMS_GEOJSON_PATH
   ], {
-    zg: true,
+    z: 10,
     dropDensestAsNeeded: true,
     force: true,
     output: ITEMS_TILES_PATH,
