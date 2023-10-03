@@ -84,5 +84,4 @@ jobs:
       if: steps.is_updated.outputs.changed != 0
       uses: ad-m/github-push-action@master
       with:
-        # github_token: ${{ secrets.PAT }}
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ secrets.PAT }}
