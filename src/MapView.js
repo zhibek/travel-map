@@ -6,8 +6,9 @@ import { Protocol } from 'pmtiles';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 import mapStyle from './mapStyle.json';
-if (mapStyle?.sources?.items?.url) {
-  mapStyle.sources.items.url = mapStyle?.sources?.items?.url.replace('/files/', `${window.PUBLIC_URL}/files/`);
+const { NODE_ENV, PUBLIC_URL } = process.env;
+if (NODE_ENV === 'development') {
+  mapStyle.sources.items.url = mapStyle.sources.items.url.replace('/files/', `${PUBLIC_URL}/files/`);
 }
 
 const MapView = () => {
