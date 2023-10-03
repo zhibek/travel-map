@@ -20,11 +20,12 @@ const PersisterInstance = async () => {
 
 class Persister {
   async init() {
+    this.items = [];
+    
     if (!ITEMS_PERSIST_DB) {
       return;
     }
 
-    this.items = [];
     this.db = await open({
       filename: ITEMS_DB_PATH,
       driver: sqlite3.cached.Database,

@@ -7,7 +7,7 @@ export const WIKIVOYAGE_PARSING_OPTIONS = {
   lang: 'en',
 };
 
-export const ITEMS_PERSIST_DB = true;
+export const ITEMS_PERSIST_DB = false;
 export const ITEMS_DB_PATH = './files/items.db';
 export const ITEMS_GEOJSON_PATH = './files/items.geojson';
 export const ITEMS_TILES_PATH = './files/items.pmtiles';
