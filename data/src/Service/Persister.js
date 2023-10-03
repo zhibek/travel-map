@@ -21,7 +21,7 @@ const PersisterInstance = async () => {
 class Persister {
   async init() {
     this.items = [];
-    
+
     if (!ITEMS_PERSIST_DB) {
       return;
     }
@@ -41,12 +41,15 @@ class Persister {
       id INT PRIMARY KEY,
       name TEXT NOT NULL,
       url TEXT NOT NULL,
-      coordinates TEXT,
       parent TEXT,
+      coordinates TEXT,
+      type TEXT,
+      level TEXT,
       description TEXT,
       characters INT,
       wikidata TEXT,
-      image TEXT
+      image TEXT,
+      rank INT
     ) STRICT`);
   }
 
@@ -64,41 +67,53 @@ class Persister {
       id,
       name,
       url,
-      coordinates,
       parent,
+      coordinates,
+      type,
+      level,
       description,
       characters,
       wikidata,
-      image
+      image,
+      rank
     ) VALUES (
       :id,
       :name,
       :url,
-      :coordinates,
       :parent,
+      :coordinates,
+      :type,
+      :level,
       :description,
       :characters,
       :wikidata,
-      :image
+      :image,
+      :rank
     ) ON CONFLICT(id) DO UPDATE SET
       name = :name,
       url = :url,
-      coordinates = :coordinates,
       parent = :parent,
+      coordinates = :coordinates,
+      type = :type,
+      level = :level,
       description = :description,
       characters = :characters,
       wikidata = :wikidata,
-      image = :image
+      image = :image,
+      rank = :rank
     `, {
       ':id': item?.id,
       ':name': item?.name,
       ':url': item?.url,
       ':parent': item?.parent,
       ':coordinates': item?.coordinates?.join(','),
+      ':type': item?.type,
+      ':level': item?.level,
       ':description': item?.description,
       ':characters': item?.characters,
       ':wikidata': item?.wikidata,
       ':image': item?.image,
+      ':rank': item?.rank,
     });
   }
 
