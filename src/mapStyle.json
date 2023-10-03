@@ -7,6 +7,11 @@
 			"tiles": [
 				"https://klokantech.github.io/naturalearthtiles/tiles/natural_earth.vector/{z}/{x}/{y}.pbf"
 			]
+		},
+		"items": {
+			"type": "vector",
+			"maxzoom": 10,
+			"url": "pmtiles://travel-map/files/items.pmtiles"
 		}
 	},
 	"glyphs": "https://api.maptiler.com/fonts/{fontstack}/{range}.pbf?key=uLpPPYztZ2N8w3JqsQy2",
@@ -293,6 +298,192 @@
 						]
 					]
 				}
+			}
+		},
+		{
+			"id": "place_area",
+			"source": "items",
+			"source-layer": "items",
+			"minzoom": 0,
+			"maxzoom": 5,
+			"filter": [
+				"all",
+				[
+					"in",
+					["get", "type"],
+					["literal",
+						[
+							"continent",
+							"country",
+							"region"
+						]
+					]
+				],
+				[
+					">=",
+					["zoom"],
+					[
+						"to-number",
+						["get", "rank"]
+					]
+				]
+			],
+			"type": "symbol",
+			"layout": {
+				"text-field": ["get", "name"],
+				"text-font": ["Noto Sans"],
+				"text-size": 16,
+				"visibility": "visible",
+				"text-padding": 2,
+				"text-transform": "uppercase",
+				"text-letter-spacing": 0.1
+			},
+			"paint": {
+				"text-color": "rgba(118, 116, 108, 1)",
+				"text-halo-color": "rgba(255,255,255,0.7)",
+				"text-halo-width": 0.8
+			}
+		},
+		{
+			"id": "place_detail",
+			"source": "items",
+			"source-layer": "items",
+			"minzoom": 8,
+			"filter": [
+				"all",
+				[
+					">=",
+					["zoom"],
+					[
+						"to-number",
+						["get", "rank"]
+					]
+				],
+				[
+					"in",
+					["get", "type"],
+					["literal",
+						[
+							"district",
+							"see",
+							"do"
+						]
+					]
+				]
+			],
+			"type": "symbol",
+			"layout": {
+				"symbol-sort-key": [
+					"to-number",
+					["get", "rank"]
+				],
+				"icon-image": [
+					"match",
+					["get", "type"],
+					"district",
+					"circle-stroked_11",
+					"see",
+					"attraction_11",
+					"do",
+					"information_11",
+					"circle-stroked_11"
+				],
+				"icon-size": [
+					"match",
+					["get", "level"],
+					"star",
+					1.2,
+					"guide",
+					1.2,
+					"usable",
+					1,
+					"outline",
+					1,
+					1
+				],
+				"text-field": ["get", "name"],
+				"text-font": ["Noto Sans"],
+				"text-size": 12,
+				"text-anchor": "center",
+				"text-offset": [0, 2]
+			},
+			"paint": {
+				"icon-color": "#000"
+			}
+		},
+		{
+			"id": "place_city",
+			"source": "items",
+			"source-layer": "items",
+			"minzoom": 3,
+			"filter": [
+				"all",
+				[
+					">=",
+					["zoom"],
+					[
+						"to-number",
+						["get", "rank"]
+					]
+				],
+				[
+					"in",
+					["get", "type"],
+					["literal",
+						[
+							"city",
+							"park",
+							"ruralarea",
+							"diveguide",
+							"airport"
+						]
+					]
+				]
+			],
+			"type": "symbol",
+			"layout": {
+				"symbol-sort-key": [
+					"to-number",
+					["get", "rank"]
+				],
+				"icon-image": [
+					"match",
+					["get", "type"],
+					"city",
+					"dot_11",
+					"park",
+					"park_11",
+					"ruralarea",
+					"circle-stroked_11",
+					"airport",
+					"airport_11",
+					"diveguide",
+					"scuba_diving_11",
+					"circle-stroked_11"
+				],
+				"icon-size": [
+					"match",
+					["get", "level"],
+					"huge",
+					1.5,
+					"star",
+					1.2,
+					"guide",
+					1.2,
+					"usable",
+					1,
+					"outline",
+					1,
+					1
+				],
+				"text-field": ["get", "name"],
+				"text-font": ["Noto Sans"],
+				"text-size": 12,
+				"text-anchor": "center",
+				"text-offset": [0, 2]
+			},
+			"paint": {
+				"icon-color": "#000"
 			}
 		}
 	]

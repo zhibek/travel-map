@@ -1,11 +1,21 @@
+import { useEffect } from 'react';
 import Map, { NavigationControl } from 'react-map-gl/maplibre';
 import maplibregl from 'maplibre-gl';
+import { Protocol } from 'pmtiles';
 
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 import mapStyle from './mapStyle.json';
 
 const MapView = () => {
+  useEffect(() => {
+    let protocol = new Protocol();
+    maplibregl.addProtocol('pmtiles', protocol.tile);
+    return () => {
+      maplibregl.removeProtocol('pmtiles');
+    };
+  }, []);
+
   return (
     <Map
       initialViewState={{
