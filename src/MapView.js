@@ -3,6 +3,8 @@ import Map, { NavigationControl, Popup } from 'react-map-gl/maplibre';
 import maplibregl from 'maplibre-gl';
 import { Protocol } from 'pmtiles';
 
+import GeocoderControl from './GeocoderControl';
+
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 import mapStyle from './mapStyle.json';
@@ -64,6 +66,7 @@ const MapView = () => {
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
+      <GeocoderControl />
       <NavigationControl position="top-left" showCompass={false} />
       {activeFeatures.map(feature => (
         <Popup
